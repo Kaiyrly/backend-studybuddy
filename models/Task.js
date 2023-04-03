@@ -4,14 +4,37 @@ const mongoose = require("mongoose");
 const baseOptions = {
   discriminatorKey: "taskType",
   collection: "tasks",
+  _id: false, 
+  timestamps: true,
+  toJSON: {
+    virtuals: true,
+    transform: function (doc, ret) {
+      ret.id = ret._id;
+      delete ret._id;
+      delete ret.__v;
+    },
+  },
 };
 
 const TaskSchema = new mongoose.Schema({
   name: String,
-  id: String,
+  id: {
+    type: String,
+    required: true
+  },
   goalId: String,
   taskComplete: Boolean,
+  taskType: String,
+  value: mongoose.Schema.Types.Mixed,
 }, baseOptions);
+
+TaskSchema.set('toJSON', {
+  virtuals: true,
+  versionKey: false,
+  transform: function (doc, ret) {
+    delete ret._id;
+  }
+});
 
 const NumberTypeSchema = new mongoose.Schema({
   value: {

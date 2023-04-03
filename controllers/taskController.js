@@ -18,7 +18,8 @@ exports.createTask = async (req, res) => {
     }
 
     await newTask.save();
-    res.status(201).json(newTask);
+    console.log(newTask)
+    res.status(201).json({newTask, id: newTask.id});
   } catch (error) {
     res.status(400).json({ message: error.message });
   }
@@ -26,7 +27,6 @@ exports.createTask = async (req, res) => {
 
 exports.getTasks = async (req, res) => {
   const goalId = req.query.goalId;
-  console.log(goalId)
   try {
     const tasks = await Task.find({ goalId: goalId });
     res.json(tasks);
@@ -36,20 +36,30 @@ exports.getTasks = async (req, res) => {
 };
 
 exports.updateTask = async (req, res) => {
-  console.log(req.body)
-  console.log(req.params)
+  console.log(req.body);
+  console.log(req.params);
+  const { id } = req.params;
+  console.log("Looking for task with id:", id); // Add this console log
+
   try {
-    const task = await Task.findByIdAndUpdate(req.params.id, req.body, { new: true });
+    const task = await Task.findOneAndUpdate({ id: id }, req.body, { new: true });    
+    console.log("Found task:", task);
+
     if (!task) {
       res.status(404).json({ message: "Task not found" });
       return;
     }
-    res.json(task);
+
+    // Update the task fields
+    task.set(req.body);
+    const updatedTask = await task.save();
+    res.json(updatedTask);
   } catch (error) {
     res.status(400).json({ message: error.message });
     console.log(error.message);
   }
 };
+
 
 exports.deleteTask = async (req, res) => {
   try {
