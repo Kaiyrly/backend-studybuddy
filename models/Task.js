@@ -4,7 +4,6 @@ const mongoose = require("mongoose");
 const baseOptions = {
   discriminatorKey: "taskType",
   collection: "tasks",
-  _id: false, 
   timestamps: true,
   toJSON: {
     virtuals: true,
@@ -18,7 +17,7 @@ const baseOptions = {
 
 const TaskSchema = new mongoose.Schema({
   name: String,
-  id: {
+  taskId: {
     type: String,
     required: true
   },

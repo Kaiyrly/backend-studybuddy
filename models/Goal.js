@@ -5,7 +5,7 @@ const goalSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  id: {
+  goalId: {
     type: String,
     required: true,
   },

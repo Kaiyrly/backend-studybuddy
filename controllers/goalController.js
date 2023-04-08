@@ -21,9 +21,9 @@ exports.createGoal = async (req, res) => {
 };
 
 exports.updateGoal = async (req, res) => {
-  const { id } = req.params;
+  const goalId = req.params.goalId;
   try {
-    const updatedGoal = await Goal.findByIdAndUpdate(id, req.body, { new: true });
+    const updatedGoal = await Goal.findByIdAndUpdate(goalId, req.body, { new: true });
     res.json(updatedGoal);
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -31,9 +31,9 @@ exports.updateGoal = async (req, res) => {
 };
 
 exports.deleteGoal = async (req, res) => {
-  const { id } = req.params;
+  const goalId = req.params.goalId;
   try {
-    await Goal.findByIdAndDelete(id);
+    await Goal.findByIdAndDelete(goalId);
     res.json({ message: 'Goal deleted' });
   } catch (error) {
     res.status(500).json({ message: error.message });
