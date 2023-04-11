@@ -50,6 +50,7 @@ const ToDoListSchema = new mongoose.Schema({
     {
       name: String,
       value: Boolean,
+      _id: String,
     },
   ],
 }, baseOptions);

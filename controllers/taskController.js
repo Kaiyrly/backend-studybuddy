@@ -35,11 +35,21 @@ exports.getTasks = async (req, res) => {
 };
 
 exports.updateTask = async (req, res) => {
-  console.log(req.params);
   const taskId = req.params.id;
-  console.log("Looking for task with id:", taskId); // Add this console log
   try {
-    const task = await Task.findOneAndUpdate({ taskId: taskId }, req.body, { new: true });    
+    let task;
+    switch (req.body.taskType) {
+      case "NumberType":
+        task = await Task.findOneAndUpdate({ taskId: taskId }, req.body, { new: true }); 
+        break;
+      case "ToDoList":
+        console.log({name: req.body.name, taskId: req.body.taskId, goalId: req.body.goalId, value: req.body.value.value, taskComplete: req.body.taskComplete})
+        task = await Task.findOneAndUpdate({taskId: taskId}, { ...req.body, value: req.body.value.value}, {new: true});
+        break;
+      default:
+        res.status(400).json({ message: "Invalid task type" });
+        return;
+    }
 
     if (!task) {
       res.status(404).json({ message: "Task not found" });
@@ -47,14 +57,14 @@ exports.updateTask = async (req, res) => {
     }
 
     // Update the task fields
-    task.set(req.body);
+    task.set({ ...req.body, value: req.body.value.value });
     const updatedTask = await task.save();
     res.json(updatedTask);
   } catch (error) {
     res.status(400).json({ message: error.message });
-    console.log(error.message);
   }
 };
+
 
 
 exports.deleteTask = async (req, res) => {
