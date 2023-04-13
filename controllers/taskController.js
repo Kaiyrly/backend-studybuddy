@@ -27,12 +27,22 @@ exports.createTask = async (req, res) => {
 exports.getTasks = async (req, res) => {
   const goalId = req.query.goalId;
   try {
-    const tasks = await Task.find({ goalId: goalId });
+    const tasks = await Task.find({ goalId: goalId});
     res.json(tasks);
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
 };
+
+exports.getCompletedTasks = async (req, res) => {
+  try {
+    const completedTasks = await Task.find({ taskComplete: true });
+    res.json(completedTasks);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
 
 exports.updateTask = async (req, res) => {
   const taskId = req.params.id;
@@ -40,11 +50,10 @@ exports.updateTask = async (req, res) => {
     let task;
     switch (req.body.taskType) {
       case "NumberType":
-        task = await Task.findOneAndUpdate({ taskId: taskId }, req.body, { new: true }); 
+        task = await Task.findOneAndUpdate({ taskId: taskId }, {value: req.body.value}, { new: true }); 
         break;
       case "ToDoList":
-        console.log({name: req.body.name, taskId: req.body.taskId, goalId: req.body.goalId, value: req.body.value.value, taskComplete: req.body.taskComplete})
-        task = await Task.findOneAndUpdate({taskId: taskId}, { ...req.body, value: req.body.value.value}, {new: true});
+        task = await Task.findOneAndUpdate({taskId: taskId}, { value: req.body.value.value}, {new: true});
         break;
       default:
         res.status(400).json({ message: "Invalid task type" });
@@ -56,9 +65,21 @@ exports.updateTask = async (req, res) => {
       return;
     }
 
-    // Update the task fields
-    task.set({ ...req.body, value: req.body.value.value });
+    // Check if the task is being marked complete or incomplete
+    if (task.taskComplete !== req.body.taskComplete) {
+      task.taskComplete = req.body.taskComplete;
+
+      // Set the completion date if the task is being marked complete
+      if (task.taskComplete) {
+        task.completionDate = new Date();
+      } else {
+        task.completionDate = null;
+      }
+    }
+
+
     const updatedTask = await task.save();
+
     res.json(updatedTask);
   } catch (error) {
     res.status(400).json({ message: error.message });

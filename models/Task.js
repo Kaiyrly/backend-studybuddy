@@ -1,4 +1,3 @@
-// Task.js
 const mongoose = require("mongoose");
 
 const baseOptions = {
@@ -25,6 +24,10 @@ const TaskSchema = new mongoose.Schema({
   taskComplete: Boolean,
   taskType: String,
   value: mongoose.Schema.Types.Mixed,
+  completionDate: {
+    type: Date,
+    default: null,
+  }
 }, baseOptions);
 
 TaskSchema.set('toJSON', {

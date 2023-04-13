@@ -1,12 +1,18 @@
 const mongoose = require("mongoose");
 
-const User = mongoose.model(
-  "User",
-  new mongoose.Schema({
-    username: String,
-    email: String,
-    password: String
-  })
-);
+const UserSchema = new mongoose.Schema({
+  username: String,
+  email: String,
+  password: String,
+  // Add relationships with Task and Goal models
+  goals: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Goal',
+    },
+  ],
+});
+
+const User = mongoose.model("User", UserSchema);
 
 module.exports = User;
