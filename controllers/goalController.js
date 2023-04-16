@@ -55,9 +55,8 @@ exports.updateGoal = async (req, res) => {
 
 
 exports.deleteGoal = async (req, res) => {
-  const goalId = req.params.goalId;
   try {
-    await Goal.findByIdAndDelete(goalId);
+    const goal = await Goal.findOneAndDelete({goalId: req.params.id});
     res.json({ message: 'Goal deleted' });
   } catch (error) {
     res.status(500).json({ message: error.message });

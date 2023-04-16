@@ -36,7 +36,11 @@ exports.getTasks = async (req, res) => {
 
 exports.getCompletedTasks = async (req, res) => {
   try {
-    const completedTasks = await Task.find({ taskComplete: true });
+
+    const completedTasks = await Task.find({
+      taskComplete: true
+    });
+
     res.json(completedTasks);
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -90,7 +94,20 @@ exports.updateTask = async (req, res) => {
 
 exports.deleteTask = async (req, res) => {
   try {
-    const task = await Task.findByIdAndDelete(req.params.taskId);
+    const task = await Task.findOneAndDelete({taskId: req.params.id});
+    if (!task) {
+      res.status(404).json({ message: "Task not found" });
+      return;
+    }
+    res.json({ message: "Task deleted" });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+exports.deleteTaskByGoalId = async(req, res) => {
+  try {
+    const task = await Task.findOneAndDelete({goalId: req.params.id});
     if (!task) {
       res.status(404).json({ message: "Task not found" });
       return;
