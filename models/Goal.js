@@ -27,6 +27,10 @@ const goalSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  tags: {
+    type: [String], // Add this field
+    default: [], // Set the default value to an empty array
+  },
   completionDate: {
     type: Date,
     default: null,
