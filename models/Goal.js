@@ -25,7 +25,7 @@ const goalSchema = new mongoose.Schema({
   },
   imgUrl: {
     type: String,
-    required: true,
+    required: false,
   },
   tags: {
     type: [String], // Add this field

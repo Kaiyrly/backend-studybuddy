@@ -62,7 +62,33 @@ exports.signup = async (req, res) => {
   };
   
   
+  exports.updatePassword = async (req, res) => {
+    console.log(req.body)
+    try {
+      const userId = req.userId; // Assuming userId is set in the request by the middleware
+      const currentPassword = req.body.currentPassword;
+      const newPassword = req.body.newPassword;
   
+      const user = await User.findOne(userId).exec();
+  
+      if (!user) {
+        return res.status(404).send({ message: "User not found." });
+      }
+  
+      const passwordIsValid = bcrypt.compareSync(currentPassword, user.password);
+      if (!passwordIsValid) {
+        return res.status(401).send({ message: "Current password is incorrect." });
+      }
+  
+      const hashedNewPassword = bcrypt.hashSync(newPassword, 8);
+      user.password = hashedNewPassword;
+      await user.save();
+      res.status(200).send({ message: "Password updated successfully." });
+    } catch (err) {
+      console.log(err);
+      res.status(500).send({ message: err });
+    }
+  };
   
   
   
